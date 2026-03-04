@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mirra</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=DM+Mono:wght@300;400&family=Lora:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #2C1F14; --bg-soft: #3A2A1A;
+      --card: #EDE0CC; --card-soft: #F5EDD9;
+      --ink: #1C1109; --ink-muted: #6B4F35;
+      --accent: #C4874A; --accent-lt: #E8B97A;
+      --rule: #7A5A3A44; --tag-bg: #C4874A22;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body { background: var(--bg); color: var(--card); font-family: 'Lora', Georgia, serif; min-height: 100vh; overflow-x: hidden; }
+
+    nav { position: sticky; top: 0; z-index: 100; display: flex; align-items: center; justify-content: space-between; padding: 1.25rem 4rem; background: var(--bg); border-bottom: 1px solid var(--rule); }
+    .nav-logo { font-family: 'Cormorant Garamond', serif; font-size: 1.6rem; font-weight: 300; letter-spacing: 0.08em; color: var(--card-soft); text-decoration: none; }
+    .nav-logo span { color: var(--accent-lt); font-style: italic; }
+    .nav-links { display: flex; gap: 2.5rem; list-style: none; }
+    .nav-links a { font-family: 'DM Mono', monospace; font-size: 0.72rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--card); text-decoration: none; opacity: 0.7; transition: opacity 0.2s, color 0.2s; cursor: pointer; }
+    .nav-links a:hover { opacity: 1; color: var(--accent-lt); }
+
+    .about-top { padding: 3rem 4rem; display: flex; align-items: center; gap: 3.5rem; max-width: 1100px; margin: 0 auto; border-bottom: 1px solid var(--rule); }
+
+    .photo-wrap { position: relative; width: 180px; height: 220px; flex-shrink: 0; cursor: pointer; overflow: hidden; border-radius: 4px; background: var(--bg-soft); }
+    .photo-wrap img { width: 100%; height: 100%; object-fit: cover; object-position: 50% 20%; display: block; filter: sepia(0.25) contrast(1.1) brightness(0.95); transition: filter 0.4s ease, transform 0.4s ease; }
+    .photo-wrap:hover img { filter: sepia(0.5) contrast(1.2) brightness(0.8) saturate(0.8); transform: scale(1.04); }
+    .scanlines { position: absolute; inset: 0; background: repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(0,0,0,0.15) 3px, rgba(0,0,0,0.15) 4px); pointer-events: none; opacity: 0; transition: opacity 0.3s; border-radius: 4px; }
+    .photo-wrap:hover .scanlines { opacity: 1; }
+    .photo-tint { position: absolute; inset: 0; background: linear-gradient(135deg, rgba(196,135,74,0.15), rgba(30,15,5,0.4)); opacity: 0; transition: opacity 0.4s; border-radius: 4px; }
+    .photo-wrap:hover .photo-tint { opacity: 1; }
+    .photo-label { position: absolute; bottom: 10px; left: 10px; font-family: 'DM Mono', monospace; font-size: 0.55rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--accent-lt); background: rgba(28,17,9,0.82); padding: 0.22rem 0.5rem; border-radius: 2px; opacity: 0; transition: opacity 0.3s; }
+    .photo-wrap:hover .photo-label { opacity: 1; }
+    .photo-corner { position: absolute; top: 8px; right: 8px; width: 16px; height: 16px; border-top: 2px solid var(--accent-lt); border-right: 2px solid var(--accent-lt); opacity: 0; transition: opacity 0.3s; }
+    .photo-corner-bl { position: absolute; bottom: 8px; left: 8px; width: 16px; height: 16px; border-bottom: 2px solid var(--accent-lt); border-left: 2px solid var(--accent-lt); opacity: 0; transition: opacity 0.3s; }
+    .photo-wrap:hover .photo-corner, .photo-wrap:hover .photo-corner-bl { opacity: 0.8; }
+
+    .at h3 { font-family: 'Cormorant Garamond', serif; font-size: 1.7rem; font-weight: 400; color: var(--card-soft); margin-bottom: 0.5rem; }
+    .at p { font-size: 0.93rem; line-height: 1.85; color: var(--card); opacity: 0.65; max-width: 540px; }
+    .soc { margin-top: 1rem; display: flex; gap: 1.2rem; }
+    .soc a { font-family: 'DM Mono', monospace; font-size: 0.65rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent-lt); text-decoration: none; opacity: 0.75; transition: opacity 0.2s; }
+    .soc a:hover { opacity: 1; }
+
+    .hero { padding: 5rem 4rem 4rem; max-width: 1100px; margin: 0 auto; }
+    .hero-eyebrow { font-family: 'DM Mono', monospace; font-size: 0.7rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--accent-lt); margin-bottom: 1.4rem; opacity: 0.85; }
+    .hero h1 { font-family: 'Cormorant Garamond', serif; font-size: clamp(3.5rem, 7vw, 6.5rem); font-weight: 300; line-height: 1.05; color: var(--card-soft); letter-spacing: -0.01em; max-width: 780px; }
+    .hero h1 em { font-style: italic; color: var(--accent-lt); }
+    .hero-sub { margin-top: 1.8rem; font-size: 1.05rem; color: var(--card); opacity: 0.65; max-width: 500px; line-height: 1.75; }
+    .hero-chips { display: flex; flex-wrap: wrap; gap: 0.6rem; margin-top: 1.8rem; }
+    .chip { font-family: 'DM Mono', monospace; font-size: 0.65rem; letter-spacing: 0.12em; text-transform: uppercase; border: 1px solid var(--accent); color: var(--accent-lt); padding: 0.35rem 0.8rem; border-radius: 999px; opacity: 0.8; }
+    .hero-line { display: block; width: 60px; height: 1px; background: var(--accent); margin: 2.5rem 0; opacity: 0.6; }
+
+    .sw { max-width: 1100px; margin: 0 auto; padding: 0 4rem 4rem; }
+    .sl { font-family: 'DM Mono', monospace; font-size: 0.65rem; letter-spacing: 0.25em; text-transform: uppercase; color: var(--accent); margin-bottom: 1.5rem; opacity: 0.9; }
+
+    .featured-card { background: var(--card); color: var(--ink); border-radius: 4px; padding: 3rem 3.5rem; cursor: pointer; position: relative; overflow: hidden; transition: transform 0.3s ease, box-shadow 0.3s ease; }
+    .featured-card::after { content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 3px; background: linear-gradient(90deg, var(--accent), var(--accent-lt)); transform: scaleX(0); transform-origin: left; transition: transform 0.4s ease; }
+    .featured-card:hover { transform: translateY(-3px); box-shadow: 0 20px 60px #0008; }
+    .featured-card:hover::after { transform: scaleX(1); }
+    .ftag { display: inline-block; font-family: 'DM Mono', monospace; font-size: 0.65rem; letter-spacing: 0.15em; text-transform: uppercase; background: var(--tag-bg); color: var(--accent); padding: 0.3rem 0.7rem; border-radius: 2px; margin-bottom: 1rem; }
+    .featured-card h2 { font-family: 'Cormorant Garamond', serif; font-size: 2.4rem; font-weight: 400; line-height: 1.2; color: var(--ink); margin-bottom: 1rem; max-width: 600px; }
+    .featured-card p { font-size: 0.95rem; line-height: 1.8; color: var(--ink-muted); max-width: 680px; }
+    .fmeta { display: flex; align-items: center; gap: 1rem; margin-top: 1.5rem; font-family: 'DM Mono', monospace; font-size: 0.68rem; color: var(--ink-muted); letter-spacing: 0.08em; flex-wrap: wrap; }
+    .dot { opacity: 0.4; }
+
+    .grid3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; margin-top: 1.5rem; }
+    .card { background: var(--bg-soft); border: 1px solid var(--rule); border-radius: 4px; padding: 1.8rem; cursor: pointer; transition: background 0.25s, transform 0.25s, border-color 0.25s; }
+    .card:hover { background: #4A3322; border-color: var(--accent); transform: translateY(-2px); }
+    .cnum { font-family: 'DM Mono', monospace; font-size: 0.6rem; color: var(--accent); opacity: 0.5; margin-bottom: 0.4rem; }
+    .ctag { font-family: 'DM Mono', monospace; font-size: 0.6rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--accent-lt); opacity: 0.8; margin-bottom: 0.75rem; }
+    .card h3 { font-family: 'Cormorant Garamond', serif; font-size: 1.45rem; font-weight: 400; line-height: 1.3; color: var(--card-soft); margin-bottom: 0.75rem; }
+    .card p { font-size: 0.88rem; line-height: 1.75; color: var(--card); opacity: 0.6; }
+    .stack { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-top: 1.2rem; }
+    .st { font-family: 'DM Mono', monospace; font-size: 0.58rem; background: var(--tag-bg); color: var(--accent-lt); padding: 0.2rem 0.55rem; border-radius: 2px; opacity: 0.85; }
+    .cf { display: flex; justify-content: space-between; align-items: center; margin-top: 1.4rem; padding-top: 1rem; border-top: 1px solid var(--rule); font-family: 'DM Mono', monospace; font-size: 0.62rem; color: var(--card); opacity: 0.45; }
+    .arr { font-size: 1rem; opacity: 0.5; transition: transform 0.2s, opacity 0.2s; }
+    .card:hover .arr { transform: translateX(4px); opacity: 1; color: var(--accent-lt); }
+
+    footer { padding: 2.5rem 4rem; text-align: center; font-family: 'DM Mono', monospace; font-size: 0.65rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--card); opacity: 0.3; border-top: 1px solid var(--rule); }
+
+    @keyframes fadeUp { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: translateY(0); } }
+    .about-top { animation: fadeUp 0.6s ease both; }
+    .hero-eyebrow { animation: fadeUp 0.6s 0.1s ease both; }
+    .hero h1 { animation: fadeUp 0.7s 0.15s ease both; }
+    .hero-sub { animation: fadeUp 0.7s 0.2s ease both; }
+    .hero-chips { animation: fadeUp 0.7s 0.25s ease both; }
+
+    @media (max-width: 900px) {
+      nav, .about-top, .hero, .sw { padding-left: 2rem; padding-right: 2rem; }
+      .about-top { flex-direction: column; gap: 1.5rem; align-items: flex-start; }
+      .photo-wrap { width: 100%; height: 300px; }
+      .photo-wrap img { object-position: 50% 15%; }
+      .grid3 { grid-template-columns: 1fr 1fr; }
+    }
+    @media (max-width: 600px) {
+      nav { padding: 1rem 1.5rem; }
+      .nav-links { gap: 1.2rem; }
+      .about-top, .hero, .sw { padding: 2rem 1.5rem; }
+      .grid3 { grid-template-columns: 1fr; }
+      .photo-wrap { width: 100%; height: 280px; }
+      .photo-wrap img { object-position: 50% 15%; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <a class="nav-logo" href="#home">mirra <span>// build</span></a>
+    <ul class="nav-links">
+      <li><a href="#home">Home</a></li>
+      <li><a href="#projects">Projects</a></li>
+      <li><a href="#writing">Writing</a></li>
+      <li><a href="#about">About</a></li>
+    </ul>
+  </nav>
+
+  <div class="about-top" id="about">
+    <div class="photo-wrap">
+      <img src="IMG_3133.jpg" alt="Mirra" />
+      <div class="scanlines"></div>
+      <div class="photo-tint"></div>
+      <div class="photo-corner"></div>
+      <div class="photo-corner-bl"></div>
+      <span class="photo-label">mirra · dubai</span>
+    </div>
+    <div class="at">
+      <h3>Mirra</h3>
+      <p>Final year CS student in Dubai. I build things at the intersection of AI, security and software. Currently: deepfake detection for KYC, a voicemail summariser, and somewhere in between a research paper.</p>
+      <div class="soc">
+        <a href="https://github.com/santhoshi-mirra" target="_blank">GitHub</a>
+        <a href="https://www.linkedin.com/in/santhoshi-mirra" target="_blank">LinkedIn</a>
+        <a href="mailto:mirrasanthoshii@gmail.com">Email</a>
+      </div>
+    </div>
+  </div>
+
+  <section class="hero" id="home">
+    <p class="hero-eyebrow">✦ CS · Engineering · Dubai</p>
+    <h1>code, research &amp; <em>things worth building</em></h1>
+    <p class="hero-sub">Notes from the process. What i'm making, what broke, what I'm still figuring out.</p>
+    <div class="hero-chips">
+      <span class="chip">AI</span>
+      <span class="chip">Computer Vision</span>
+      <span class="chip">NLP</span>
+      <span class="chip">HCI</span>
+      <span class="chip">Python</span>
+    </div>
+    <span class="hero-line"></span>
+  </section>
+
+  <section class="sw" id="projects">
+    <p class="sl">✦ Featured Project</p>
+    <div class="featured-card">
+      <span class="ftag">Research · Final Year Project</span>
+      <h2>DeepGuard · AV Deepfake Detection</h2>
+      <p>A browser extension that passively detects deepfakes in live video calls and KYC portals, no user action needed. Built on EfficientNet-B4 and Wav2Vec 2.0 with a cross-attention fusion layer and temporal LSTM. Trained on FakeAVCeleb, tested on LAV-DF for true cross-dataset generalization. Targeting a research paper submission.</p>
+      <div class="fmeta">
+        <span>2025 · 2026</span><span class="dot">·</span>
+        <span>PyTorch · FastAPI · Chrome</span><span class="dot">·</span>
+        <span style="color:var(--accent)">Read more →</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="sw">
+    <p class="sl">✦ Other Projects</p>
+    <div class="grid3">
+      <div class="card">
+        <p class="cnum">01</p>
+        <p class="ctag">AI · NLP</p>
+        <h3>Voice Note Intelligence</h3>
+        <p>Too busy in a meeting to check your voicemail? This tool transcribes and summarises voice messages so you get the key info instantly, no playback needed.</p>
+        <div class="stack">
+          <span class="st">Python</span><span class="st">Speech-to-Text</span><span class="st">NLP</span><span class="st">Summarisation</span>
+        </div>
+        <div class="cf"><span>In progress</span><span class="arr">→</span></div>
+      </div>
+      <div class="card">
+        <p class="cnum">02</p>
+        <p class="ctag">AI · Healthcare</p>
+        <h3>Breast Cancer Detection</h3>
+        <p>A deep learning model for early-stage breast cancer classification, built to support faster and more reliable screening, especially in under-resourced settings.</p>
+        <div class="stack">
+          <span class="st">Python</span><span class="st">CNN</span><span class="st">Medical Imaging</span><span class="st">PyTorch</span>
+        </div>
+        <div class="cf"><span>Completed</span><span class="arr">→</span></div>
+      </div>
+      <div class="card">
+        <p class="cnum">03</p>
+        <p class="ctag">Coming Soon</p>
+        <h3>What's next?</h3>
+        <p>Always exploring. My interests sit at the intersection of security, AI and human-facing tools, systems that work quietly and make life meaningfully easier.</p>
+        <div class="stack"><span class="st">TBD</span><span class="st">Ideas welcome</span></div>
+        <div class="cf"><span>Soon</span><span class="arr">→</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="sw" id="writing">
+    <p class="sl">✦ Writing</p>
+    <div class="grid3">
+      <div class="card">
+        <p class="ctag">Tech</p>
+        <h3>Why I chose cross-attention for AV fusion</h3>
+        <p>A breakdown of the architectural decision at the core of DeepGuard and why simple concatenation wouldn't have cut it.</p>
+        <div class="cf"><span>Coming soon</span><span class="arr">→</span></div>
+      </div>
+      <div class="card">
+        <p class="ctag">Research</p>
+        <h3>Cross-dataset testing: why it matters more than accuracy</h3>
+        <p>Most deepfake papers look great on paper. Here's why your train/test split tells the real story.</p>
+        <div class="cf"><span>Coming soon</span><span class="arr">→</span></div>
+      </div>
+      <div class="card">
+        <p class="ctag">Student Life</p>
+        <h3>Doing a research-level FYP while staying sane</h3>
+        <p>Final year, one big project, a potential paper deadline. Here's how I'm structuring my time.</p>
+        <div class="cf"><span>Coming soon</span><span class="arr">→</span></div>
+      </div>
+    </div>
+  </section>
+
+  <footer>© 2026 Mirra · Blog</footer>
+
+  <script>
+    document.querySelectorAll('a[href^="#"]').forEach(a => {
+      a.addEventListener('click', e => {
+        const target = document.querySelector(a.getAttribute('href'));
+        if (target) { e.preventDefault(); target.scrollIntoView({ behavior: 'smooth' }); }
+      });
+    });
+  </script>
+
+</body>
+</html>
